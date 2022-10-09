@@ -4,9 +4,10 @@ from flask import Flask
 from rediscluster import RedisCluster
 import os
 
-
 app = Flask(__name__)
-startup_nodes = [{"host": os.getenv("REDIS_HOST"), "port": os.getenv("REDIS_PORT")}]
+startup_nodes = [
+    {"host": os.getenv("REDIS_HOST"), "port": os.getenv("REDIS_PORT")}
+]
 db = RedisCluster(startup_nodes=startup_nodes, decode_responses=True)
 
 

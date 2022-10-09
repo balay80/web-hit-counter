@@ -1,0 +1,9 @@
+.git/
+.gitignore
+.vscode/
+.pytest_cache/
+*.SKEL
+*.md
+__pycache__
+#
+k8s/
