@@ -53,20 +53,20 @@ deploy-app: ## Deploy only the hit-counter-app
 .PHONY: deploy-all
 deploy-all: deploy-redis-cluster deploy-app ## Deploy a working hit-counter-app along with backing redis-db cluster
 
-.PHONY: cleanup-app 
-cleanup-app: ## Clean only the hit-counter-app
+.PHONY: clean-app
+clean-app: ## Clean only the hit-counter-app
 	kubectl delete -f k8s/hit-counter-app/
 
-.PHONY: cleanup-redis-cluster
-cleanup-redis-cluster: ## Clena only the redis-cluster
+.PHONY: clean-redis-cluster
+clean-redis-cluster: ## Clean only the redis-cluster
 	kubectl delete -f k8s/redis-cluster/
 	sleep 15 ## waiting for pods cleanup
 	kubectl get pvc | awk '{print $$1}' | sed '1d' | xargs kubectl delete pvc
 	sleep 5
 	kubectl get pv | awk '{print $$1}' | sed '1d' | xargs kubectl delete pv
 
-.PHONY: cleanup-all
-cleanup-all: cleanup-app cleanup-redis-cluster  ## Cleaning up application and redis cluster
+.PHONY: clean-all
+clean-all: clean-app clean-redis-cluster  ## Clean up application and redis cluster
 
 ## local dev environment setup
 .PHONY: rebuild-local-python
