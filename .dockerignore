@@ -5,5 +5,4 @@
 *.SKEL
 *.md
 __pycache__
-#
 k8s/

@@ -1,6 +1,5 @@
 # Version automatic by managing this -> minikube/deployment.yaml(.TEMPLATE)
 #  ":=" expands immediately.
-KUBERNETES_VERSION := v1.21.14
 NAMESPACE          := hit-counter-app
 DEPLOY_VERSION     := $(shell grep -E 'hit-counter-app:[0-9]' k8s/hit-counter-app/app-deploy.yaml.TEMPLATE | cut -d ':' -f 3)
 DEPLOY_MAJOR       := $(shell echo "$(DEPLOY_VERSION)" | awk 'BEGIN{FS="."}{print $$1}')
@@ -18,7 +17,6 @@ default:
 	@grep -E '^[0-9a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 ###################################################
 # Build functions
-## Local (minikube) build
 
 .PHONY: do-start
 do-start:
@@ -70,8 +68,6 @@ cleanup-redis-cluster: ## Clena only the redis-cluster
 .PHONY: cleanup-all
 cleanup-all: cleanup-app cleanup-redis-cluster  ## Cleaning up application and redis cluster
 
-
-
 ## local dev environment setup
 .PHONY: rebuild-local-python
 rebuild-local-python: whack-local-python local-python  ## (Re)build the required local Python environment.
@@ -84,8 +80,6 @@ local-python:
 	pyenv local hit-counter-app-dev
 	pip install --upgrade pip
 	pip install wheel pip-tools ply
-	pip-compile requirements.in
-	pip install -r requirements.saml.txt --no-cache-dir
 	pip install -r requirements.txt --no-cache-dir
 
 .PHONY: whack-local-python
@@ -95,7 +89,6 @@ whack-local-python:
 	pyenv uninstall --force hit-counter-app-dev
 
 .PHONY: dump-versions
-.IGNORE: dump-versions
 dump-versions:  ## Show the versions of all the significant things in the local environment.
 	python --version
 	pyenv version
