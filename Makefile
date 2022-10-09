@@ -50,8 +50,12 @@ deploy-redis-cluster: ## deploy redis-cluster for the app
 	sleep 30 ## Waiting for Redis cluster to be ready to accept the connections .....
 
 .PHONY: deploy-app
-deploy-app: 
+deploy-app:
+	@eval $$(minikube docker-env) ;\
 	kubectl apply -f k8s/hit-counter-app/
+
+.PHONY: deploy-all
+deploy-all: deploy-redis-cluster deploy-app ## Deploy a working hit-counter-app along with backing redis-db cluster
 
 .PHONY: cleanup-app
 cleanup-app:
@@ -64,11 +68,10 @@ cleanup-redis-cluster:
 	kubectl get pv | awk '{print $1}' | sed '1d' | xargs kubectl delete pv
 	kubectl get pvc | awk '{print $1}' | sed '1d' | xargs kubectl delete pvc
 
-.PHONY: cleanup
-cleanup: cleanup-app cleanup-redis-cluster  ## Cleaning up application and redis cluster
+.PHONY: cleanup-all
+cleanup-all: cleanup-app cleanup-redis-cluster  ## Cleaning up application and redis cluster
 
-.PHONY: deploy-hit-counter-app
-deploy-hit-counter-app: deploy-redis-cluster deploy-app ## Deploy a working hit-counter-app along with backing redis-db cluster
+
 
 ## local dev environment setup
 .PHONY: rebuild-local-python
