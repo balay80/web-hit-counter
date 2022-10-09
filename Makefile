@@ -60,7 +60,8 @@ cleanup-app:
 .PHONY: cleanup-redis-cluster
 cleanup-redis-cluster:
 	kubectl delete -f k8s/redis-cluster/
-	sleep 10 ## waiting for pods cleanup
+	sleep 15 ## waiting for pods cleanup
+	kubectl get pv | awk '{print $1}' | sed '1d' | xargs kubectl delete pv
 	kubectl get pvc | awk '{print $1}' | sed '1d' | xargs kubectl delete pvc
 
 .PHONY: cleanup
@@ -77,8 +78,8 @@ rebuild-local-python: whack-local-python local-python  ## (Re)build the required
 local-python:
 	@echo '### Building the Python virtual environment and installing packages.'
 	pyenv install -s 3.9.5
-	pyenv virtualenv -f 3.9.5 portal-dev
-	pyenv local portal-dev
+	pyenv virtualenv -f 3.9.5 hit-counter-app-dev
+	pyenv local hit-counter-app-dev
 	pip install --upgrade pip
 	pip install wheel pip-tools ply
 	pip-compile requirements.in
@@ -89,7 +90,7 @@ local-python:
 whack-local-python:
 	@echo '### Destroying the Python virtual environment.'
 	rm -fv .python-version
-	pyenv uninstall --force portal-dev
+	pyenv uninstall --force hit-counter-app-dev
 
 .PHONY: dump-versions
 .IGNORE: dump-versions

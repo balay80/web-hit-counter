@@ -29,6 +29,7 @@ spec:
       containers:
         - name: hit-counter-app
           image: balayadav/hit-counter-app:1.0.20221009.1852
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5000
           env:
