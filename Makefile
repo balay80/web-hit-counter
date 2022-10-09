@@ -24,13 +24,7 @@ default:
 do-start:
 	kubectl config use-context minikube # just to be sure we are deploying on local minikube cluster.
 	@echo "Starting build of version: $(VERSION)"
-	@sleep .5
-
-
-.PHONY: do-local
-do-local: do-start build-app deploy-hit-counter-app ## Build and deploy to a local Minikube environment.
-	@echo
-	@echo "Done - Version: $(VERSION) - $$(date)"
+	sleep 5
 
 .PHONY: build-app
 build-app:
@@ -41,6 +35,10 @@ build-app:
 	@eval $$(minikube docker-env) ;\
 	docker build -t "balayadav/hit-counter-app:$(VERSION)" .
 
+.PHONY: do-local
+do-local: do-start build-app deploy-all ## Build and deploy to a local Minikube environment.
+	@echo
+	@echo "Done - Version: $(VERSION) - $$(date)"
 
 .PHONY: deploy-redis-cluster
 deploy-redis-cluster: ## deploy redis-cluster for the app
