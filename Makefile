@@ -41,26 +41,26 @@ do-local: do-start build-app deploy-all ## Build and deploy to a local Minikube 
 	@echo "Done - Version: $(VERSION) - $$(date)"
 
 .PHONY: deploy-redis-cluster
-deploy-redis-cluster: ## deploy redis-cluster for the app
+deploy-redis-cluster: ## Deploy only the redis-cluster for the app
 	kubectl apply -f k8s/redis-cluster/
 	sleep 30 ## Waiting for redis pods to be up and running ......
 	echo "yes" | kubectl exec -it redis-cluster-0 -- redis-cli --cluster create --cluster-replicas 1 $$(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]}{.status.podIP}:6379 ');\
 	sleep 30 ## Waiting for Redis cluster to be ready to accept the connections .....
 
 .PHONY: deploy-app
-deploy-app:
+deploy-app: ## Deploy only the hit-counter-app
 	@eval $$(minikube docker-env) ;\
 	kubectl apply -f k8s/hit-counter-app/
 
 .PHONY: deploy-all
 deploy-all: deploy-redis-cluster deploy-app ## Deploy a working hit-counter-app along with backing redis-db cluster
 
-.PHONY: cleanup-app
-cleanup-app:
+.PHONY: cleanup-app 
+cleanup-app: ## Clean only the hit-counter-app
 	kubectl delete -f k8s/hit-counter-app/
 
 .PHONY: cleanup-redis-cluster
-cleanup-redis-cluster:
+cleanup-redis-cluster: ## Clena only the redis-cluster
 	kubectl delete -f k8s/redis-cluster/
 	sleep 15 ## waiting for pods cleanup
 	kubectl get pv | awk '{print $1}' | sed '1d' | xargs kubectl delete pv
