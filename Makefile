@@ -79,7 +79,6 @@ local-python:
 	pyenv virtualenv -f 3.9.5 hit-counter-app-dev
 	pyenv local hit-counter-app-dev
 	pip install --upgrade pip
-	pip install wheel pip-tools ply
 	pip install -r requirements.txt --no-cache-dir
 
 .PHONY: whack-local-python

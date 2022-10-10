@@ -31,6 +31,22 @@ Versions known to work:
 
 ### Build and deploy docker image to local minikube cluster
 
+#### Available make targets
+
+```sh
+❯ make
+clean-all                      Clean up application and redis cluster
+clean-app                      Clean only the hit-counter-app
+clean-redis-cluster            Clean only the redis-cluster
+deploy-all                     Deploy a working hit-counter-app along with backing redis-db cluster
+deploy-app                     Deploy only the hit-counter-app
+deploy-redis-cluster           Deploy only the redis-cluster for the app
+do-local                       Build and deploy to a local Minikube environment.
+dump-versions                  Show the versions of all the significant things in the local environment.
+rebuild-local-python           (Re)build the required local Python environment.
+
+```
+
 Make sure you have your local minikube cluster running.  
 To build and deploy the docker image to the local minikube cluster run below make target.  
 This will build the `hit-counter-app` and it will be available in your minikube's image cache.  
@@ -125,3 +141,26 @@ Below `make` target will cleanup all the deployed components from the cluster
 ```sh
 make clean-all
 ```
+
+### Pros
+
+* Application HA,taken care by k8s native feature of deployments
+* DB HA, taken care by the k8s native statefulsets, pv's, pvc's
+* Application's core functionality is working. ie. it should print the hit counter in the web browser and store the hits in the db.
+
+### Cons
+
+* Currently application is not instrumented for any metrics so no monitoring in place for the app.
+* Pods, nodes, monitoring missing. ie, no visibility of app and it's supporting infra
+* Logging not yet implemented
+* No health checks impleted yet. (readiness, linveness probes)
+* Resource request limits
+* PDB's ?
+
+### *TODO*
+
+* implement monitoring (prometheus. grafana)
+* implement logging (EFK)
+* health checks (liveness checks, readiness checks)
+* resource request, limits
+* PDB's for multinode cluster
