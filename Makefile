@@ -1,6 +1,6 @@
 # Version automatic by managing this -> minikube/deployment.yaml(.TEMPLATE)
 #  ":=" expands immediately.
-NAMESPACE          := hit-counter-app
+APP                := hit-counter-app
 DEPLOY_VERSION     := $(shell grep -E 'hit-counter-app:[0-9]' k8s/hit-counter-app/app-deploy.yaml.TEMPLATE | cut -d ':' -f 3)
 DEPLOY_MAJOR       := $(shell echo "$(DEPLOY_VERSION)" | awk 'BEGIN{FS="."}{print $$1}')
 DEPLOY_MINOR       := $(shell echo "$(DEPLOY_VERSION)" | awk 'BEGIN{FS="."}{print $$2}')
@@ -40,13 +40,19 @@ do-local: do-start build-app deploy-all ## Build and deploy to a local Minikube 
 
 .PHONY: deploy-redis-cluster
 deploy-redis-cluster: ## Deploy only the redis-cluster for the app
+	@echo "### Deploying redis-cluster .........."
 	kubectl apply -f k8s/redis-cluster/
-	sleep 30 ## Waiting for redis pods to be up and running ......
+	@echo "### Waiting for redis pods to be up and running ......"
+	sleep 30
 	echo "yes" | kubectl exec -it redis-cluster-0 -- redis-cli --cluster create --cluster-replicas 1 $$(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]}{.status.podIP}:6379 ');\
-	sleep 30 ## Waiting for Redis cluster to be ready to accept the connections .....
+
+	@echo "### Waiting for Redis cluster to be ready to accept the connections ....."
+	sleep 30
+	
 
 .PHONY: deploy-app
 deploy-app: ## Deploy only the hit-counter-app
+	@echo "### Deploying $(APP) application ........"
 	@eval $$(minikube docker-env) ;\
 	kubectl apply -f k8s/hit-counter-app/
 
@@ -55,12 +61,15 @@ deploy-all: deploy-redis-cluster deploy-app ## Deploy a working hit-counter-app 
 
 .PHONY: clean-app
 clean-app: ## Clean only the hit-counter-app
+	@echo "### Cleaning $(APP) application ........"
 	kubectl delete -f k8s/hit-counter-app/
 
 .PHONY: clean-redis-cluster
 clean-redis-cluster: ## Clean only the redis-cluster
+	@echo "### Cleaning redis-cluster ..........."
 	kubectl delete -f k8s/redis-cluster/
-	sleep 15 ## waiting for pods cleanup
+	@echo "### Waiting for pods cleanup ........."
+	sleep 15
 	kubectl get pvc | awk '{print $$1}' | sed '1d' | xargs kubectl delete pvc
 	sleep 5
 	kubectl get pv | awk '{print $$1}' | sed '1d' | xargs kubectl delete pv
