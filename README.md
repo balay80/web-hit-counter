@@ -164,3 +164,5 @@ make clean-all
 * health checks (liveness checks, readiness checks)
 * resource request, limits
 * PDB's for multinode cluster
+* helm templates ?
+* terraform modules for this app deployment ?
