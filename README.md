@@ -147,6 +147,7 @@ make clean-all
 * Application HA,taken care by k8s native feature of deployments
 * DB HA, taken care by the k8s native statefulsets, pv's, pvc's
 * Application's core functionality is working. ie. it should print the hit counter in the web browser and store the hits in the db.
+* Currently build and deployed using `Makefile`, but it should be via CI/CD tools/Pipelines
 
 ### Cons
 
@@ -166,3 +167,4 @@ make clean-all
 * PDB's for multinode cluster
 * helm templates ?
 * terraform modules for this app deployment ?
+* Deploy via CI/CD tools/Pipelines
