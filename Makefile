@@ -44,7 +44,7 @@ deploy-redis-cluster: ## Deploy only the redis-cluster for the app
 	kubectl apply -f k8s/redis-cluster/
 	@echo "### Waiting for redis pods to be up and running ......"
 	sleep 30
-	echo "yes" | kubectl exec -it redis-cluster-0 -- redis-cli --cluster create --cluster-replicas 1 $$(kubectl get pods -l app=redis-cluster -o jsonpath='{range.items[*]}{.status.podIP}:6379 ');\
+	echo "yes" | kubectl exec -it redis-cluster-0 -- redis-cli --cluster create --cluster-replicas 1 $$(kubectl get pods -l app=redis-cluster -o json | grep '\"podIP\"' | tr -d ' ,\"' | cut -d ':' -f2 | awk 1 ORS=':6379 ');\
 
 	@echo "### Waiting for Redis cluster to be ready to accept the connections ....."
 	sleep 30
